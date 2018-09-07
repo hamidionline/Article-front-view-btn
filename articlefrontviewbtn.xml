@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3.0" type="plugin" group="system" method="upgrade">
+<extension version="3.7" type="plugin" group="system" method="upgrade">
     <name>System - Article front view button</name>
     <author>Aleksey A. Morozov</author>
     <authorEmail>alekvolsk@yandex.ru</authorEmail>
     <copyright>© 2018 Aleksey A. Morozov. All right reserved.</copyright>
     <license>GNU GPL v3 or later</license>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <creationDate>July 2018</creationDate>
     <scriptfile>script.php</scriptfile>
     <description>Adds a button on the toolbar to view the material on the front of the site in the administrative part of the site on the material editing page</description>
