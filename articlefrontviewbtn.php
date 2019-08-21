@@ -21,20 +21,50 @@ class plgSystemArticlefrontviewbtn extends CMSPlugin
             return false;
         }
 
+        $unsetOptions = [
+            'com_templates',
+            'com_plugins',
+            'com_modules',
+            'com_advancedmodules',
+            'com_languages',
+            'com_redirect',
+            'com_users',
+            'com_fields',
+            'com_admin',
+            'com_associations',
+            'com_finder',
+            'com_messages',
+            'com_newsfeeds',
+            'com_privacy',
+            'com_banners',
+            'com_attrs'
+        ];
+
         $option = $app->input->get('option');
+        if (in_array($option, $unsetOptions)) {
+            return false;
+        }
+
         $view   = $app->input->get('view');
         $layout = $app->input->get('layout');
         $id     = $app->input->get('id');
 
         if ($layout == 'edit' && $id && $option && $view) {
-            $title = 'See what the site looks like';
-
-            $menuId = $this->getItemid($option, $view, $id);
-            $url = 'index.php?option=' . $option . '&view=' . $view . '&id=' . $id . ($menuId ? '&Itemid=' . $menuId : '');
+            if ($option === 'com_menus') {
+                if ($view === 'item') {
+                    $url = 'index.php?Itemid=' . $id;
+                } else {
+                    return false;
+                }
+            } else {
+                $menuId = $this->getItemid($option, $view, $id);
+                $url = 'index.php?option=' . $option . '&view=' . $view . '&id=' . $id . ($menuId ? '&Itemid=' . $menuId : '');
+            }
 
             $url = substr(Route::_($url), strlen(Uri::base(true)) + 1);
             $url = SiteApplication::getRouter('site')->build($url)->toString();
 
+            $title = 'See what the site looks like';
             $html = '<a href="' . $url . '" target="_blank" class="btn btn-small"><span class="icon-eye"></span> ' . $title . '</a>';
             $toolbar = ToolBar::getInstance('toolbar');
             $toolbar->appendButton('Custom', $html);
@@ -45,7 +75,7 @@ class plgSystemArticlefrontviewbtn extends CMSPlugin
 
     private function getItemid($option, $view, $id)
     {
-        $items = JFactory::getApplication()->getMenu('site')->getItems('component', $option);
+        $items = Factory::getApplication()->getMenu('site')->getItems('component', $option);
         foreach ($items as $item) {
             if ($item->query['view'] === $view && $item->query['id'] === $id) {
                 return $item->id;
