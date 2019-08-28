@@ -2,75 +2,59 @@
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Table\Table;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\CMS\Language\Text;
 
 class plgSystemArticlefrontviewbtn extends CMSPlugin
 {
+    protected $app;
+    protected $db;
+    protected $autoloadLanguage = true;
+    private $unset = [];
+
+    public function __construct(&$subject, $config)
+    {
+        parent::__construct($subject, $config);
+        
+        $unsetList = $this->params->get('unsetList', []);
+
+        $i = 0;
+        if (!is_array($unsetList)) {
+            foreach ($unsetList as $unsetItem) {
+                if (!is_array($unsetItem->options)) {
+                    foreach ($unsetItem->options as $option) {
+                        $this->unset[$i][$option->prm] = !$option->tp ? $option->val : 0;
+                    }
+                    $i++;
+                }
+            }
+        }
+    }
+
     public function onBeforeRender()
     {
-        $app = Factory::getApplication();
-
-        if (Factory::getDocument()->getType() != 'html') {
+        if (
+            Factory::getDocument()->getType() != 'html' ||
+            !$this->app->isClient('administrator') ||
+            $this->checkUnsetExtension()
+        ) {
             return false;
         }
 
-        if (!$app->isClient('administrator')) {
+        $url = $this->getUrlInDefaultExtension();
+        if (!$url) {
             return false;
         }
 
-        $unsetOptions = [
-            'com_templates',
-            'com_plugins',
-            'com_modules',
-            'com_advancedmodules',
-            'com_languages',
-            'com_redirect',
-            'com_users',
-            'com_fields',
-            'com_admin',
-            'com_associations',
-            'com_finder',
-            'com_messages',
-            'com_newsfeeds',
-            'com_privacy',
-            'com_banners',
-            'com_attrs'
-        ];
+        $url = substr(Route::_($url), strlen(Uri::base(true)) + 1);
+        $url = SiteApplication::getRouter('site')->build($url)->toString();
 
-        $option = $app->input->get('option');
-        if (in_array($option, $unsetOptions)) {
-            return false;
-        }
-
-        $view   = $app->input->get('view');
-        $layout = $app->input->get('layout');
-        $id     = $app->input->get('id');
-
-        if ($layout == 'edit' && $id && $option && $view) {
-            if ($option === 'com_menus') {
-                if ($view === 'item') {
-                    $url = 'index.php?Itemid=' . $id;
-                } else {
-                    return false;
-                }
-            } else {
-                $menuId = $this->getItemid($option, $view, $id);
-                $url = 'index.php?option=' . $option . '&view=' . $view . '&id=' . $id . ($menuId ? '&Itemid=' . $menuId : '');
-            }
-
-            $url = substr(Route::_($url), strlen(Uri::base(true)) + 1);
-            $url = SiteApplication::getRouter('site')->build($url)->toString();
-
-            $title = 'See what the site looks like';
-            $html = '<a href="' . $url . '" target="_blank" class="btn btn-small"><span class="icon-eye"></span> ' . $title . '</a>';
-            $toolbar = ToolBar::getInstance('toolbar');
-            $toolbar->appendButton('Custom', $html);
-        } else {
-            return false;
-        }
+        $html = '<a href="' . $url . '" target="_blank" class="btn btn-small"><span class="icon-eye"></span> ' . Text::_('PLG_SYSTEM_ARTICLEFRONTVIEWBTN_TITLE') . '</a>';
+        ToolBar::getInstance('toolbar')->appendButton('Custom', $html);
     }
 
     private function getItemid($option, $view, $id)
@@ -82,5 +66,82 @@ class plgSystemArticlefrontviewbtn extends CMSPlugin
             }
         }
         return 0;
+    }
+
+    private function getUrlInDefaultExtension()
+    {
+        $unsetOptions = [
+            'com_admin',
+            'com_advancedmodules',
+            'com_associations',
+            'com_banners',
+            'com_fields',
+            'com_finder',
+            'com_languages',
+            'com_messages',
+            'com_modules',
+            'com_newsfeeds',
+            'com_plugins',
+            'com_privacy',
+            'com_redirect',
+            'com_templates',
+            'com_users'
+        ];
+
+        $option = $this->app->input->get('option');
+        if (in_array($option, $unsetOptions)) {
+            return false;
+        }
+
+        $view   = $this->app->input->get('view');
+        $layout = $this->app->input->get('layout', 'default');
+        $id     = $this->app->input->get('id', 0);
+        if ($layout == 'edit' && $id && $option && $view) {
+            switch ($option) {
+                case 'com_menus':
+                    return $view === 'item' ? 'index.php?Itemid=' . $id : false;
+                    break;
+                case 'com_content':
+                    $menuId = $this->getItemid($option, $view, $id);
+                    $table = Table::getInstance('Content');
+                    $table->load($id);
+                    $catid  = $table->catid;
+                    unset($table);
+                    return 'index.php?option=' . $option . '&view=' . $view . '&id=' . $id . ($catid ? '&catid=' . $catid : '') . ($menuId ? '&Itemid=' . $menuId : '');
+                    break;
+                case 'com_categories':
+                    $menuId = $this->getItemid($option, $view, $id);
+                    $extension = $this->app->input->get('extension', '');
+                    return 'index.php?option=' . ($extension ? $extension : 'com_categories') . '&view=' . $view . '&id=' . $id . ($menuId ? '&Itemid=' . $menuId : '');
+                    break;
+                default:
+                    $menuId = $this->getItemid($option, $view, $id);
+                    $catid  = $this->app->input->get('catid', 0);
+                    return 'index.php?option=' . $option . '&view=' . $view . '&id=' . $id . ($catid ? '&catid=' . $catid : '') . ($menuId ? '&Itemid=' . $menuId : '');
+            }
+        } else {
+            return false;
+        }
+    }
+
+    private function checkUnsetExtension()
+    {
+        if ($this->unset) {
+            foreach ($this->unset as $unset) {
+                $prms = [];
+                $check = true;
+                foreach ($unset as $key => $val) {
+                    $prms[$key] = $this->app->input->get($key);
+                    if (strtolower($prms[$key]) != strtolower($unset[$key])) {
+                        $check = false;
+                        break;
+                    }
+                }
+                if ($check) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
