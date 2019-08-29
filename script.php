@@ -1,6 +1,8 @@
 <?php defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Version;
+use Joomla\CMS\Language\Text;
 
 class plgSystemArticlefrontviewbtnInstallerScript
 {
