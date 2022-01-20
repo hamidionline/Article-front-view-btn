@@ -5,38 +5,38 @@
     <authorEmail>alekvolsk@yandex.ru</authorEmail>
     <copyright>© 2019 Aleksey A. Morozov. All right reserved.</copyright>
     <license>GNU GPL v3 or later</license>
-    <version>1.2.1</version>
-    <creationDate>August 2019</creationDate>
+    <version>1.2.2</version>
+    <creationDate>January 2022</creationDate>
     <description>PLG_SYSTEM_ARTICLEFRONTVIEWBTN_XML_DESCRIPTION</description>
     <php_minimum>5.6</php_minimum>
     <scriptfile>script.php</scriptfile>
     <files>
         <filename plugin="articlefrontviewbtn">articlefrontviewbtn.php</filename>
     </files>
-	<languages>
-		<language tag="en-GB">language/en-GB/en-GB.plg_system_articlefrontviewbtn.ini</language>
-		<language tag="en-GB">language/en-GB/en-GB.plg_system_articlefrontviewbtn.sys.ini</language>
-		<language tag="ru-RU">language/ru-RU/ru-RU.plg_system_articlefrontviewbtn.ini</language>
-		<language tag="ru-RU">language/ru-RU/ru-RU.plg_system_articlefrontviewbtn.sys.ini</language>
-	</languages>
-	<config>
-		<fields name="params">
-			<fieldset name="basic">
-				<field name="unsetList" type="subform" label="PLG_SYSTEM_ARTICLEFRONTVIEWBTN_UNSETLIST" groupByFieldset="false" multiple="true" layout="joomla.form.field.subform.repeatable">
-	                <form hidden="true" name="fsLayoutSections" repeat="true" class="form-vertical">
-						<field name="options" type="subform" label="" groupByFieldset="false" multiple="true" layout="joomla.form.field.subform.repeatable-table">
-				            <form hidden="true" name="fsLayoutSections" repeat="true">
-								<field name="prm" type="text" label="PLG_SYSTEM_ARTICLEFRONTVIEWBTN_PARAM" />
-								<field name="tp" type="list" label="PLG_SYSTEM_ARTICLEFRONTVIEWBTN_TP" class="btn-group" default="0">
-									<option value="0">PLG_SYSTEM_ARTICLEFRONTVIEWBTN_TP_0</option>
-									<option value="1">PLG_SYSTEM_ARTICLEFRONTVIEWBTN_TP_1</option>
-								</field>
-								<field name="val" type="text" label="PLG_SYSTEM_ARTICLEFRONTVIEWBTN_VAL" />
-							</form>
-						</field>
-					</form>
-				</field>
-			</fieldset>
-		</fields>
-	</config>
+    <languages>
+        <language tag="en-GB">language/en-GB/en-GB.plg_system_articlefrontviewbtn.ini</language>
+        <language tag="en-GB">language/en-GB/en-GB.plg_system_articlefrontviewbtn.sys.ini</language>
+        <language tag="ru-RU">language/ru-RU/ru-RU.plg_system_articlefrontviewbtn.ini</language>
+        <language tag="ru-RU">language/ru-RU/ru-RU.plg_system_articlefrontviewbtn.sys.ini</language>
+    </languages>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="unsetList" type="subform" label="PLG_SYSTEM_ARTICLEFRONTVIEWBTN_UNSETLIST" groupByFieldset="false" multiple="true" layout="joomla.form.field.subform.repeatable">
+                    <form hidden="true" name="fsLayoutSections" repeat="true" class="form-vertical">
+                        <field name="options" type="subform" label="" groupByFieldset="false" multiple="true" layout="joomla.form.field.subform.repeatable-table">
+                            <form hidden="true" name="fsLayoutSections" repeat="true">
+                                <field name="prm" type="text" label="PLG_SYSTEM_ARTICLEFRONTVIEWBTN_PARAM" />
+                                <field name="tp" type="list" label="PLG_SYSTEM_ARTICLEFRONTVIEWBTN_TP" class="btn-group" default="0">
+                                    <option value="0">PLG_SYSTEM_ARTICLEFRONTVIEWBTN_TP_0</option>
+                                    <option value="1">PLG_SYSTEM_ARTICLEFRONTVIEWBTN_TP_1</option>
+                                </field>
+                                <field name="val" type="text" label="PLG_SYSTEM_ARTICLEFRONTVIEWBTN_VAL" />
+                            </form>
+                        </field>
+                    </form>
+                </field>
+            </fieldset>
+        </fields>
+    </config>
 </extension>

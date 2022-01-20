@@ -19,7 +19,7 @@ class plgSystemArticlefrontviewbtn extends CMSPlugin
     public function __construct(&$subject, $config)
     {
         parent::__construct($subject, $config);
-        
+
         $unsetList = $this->params->get('unsetList', []);
 
         $i = 0;
@@ -61,7 +61,7 @@ class plgSystemArticlefrontviewbtn extends CMSPlugin
     {
         $items = Factory::getApplication()->getMenu('site')->getItems('component', $option);
         foreach ($items as $item) {
-            if ($item->query['view'] === $view && $item->query['id'] === $id) {
+            if ($item->query['view'] === $view && isset($item->query['id']) && $item->query['id'] === $id) {
                 return $item->id;
             }
         }
